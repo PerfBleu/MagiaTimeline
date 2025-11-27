@@ -41,8 +41,8 @@ def main():
     parser.add_argument("--version", action="version", version=VERSION)
     args = parser.parse_args()
     
-    schema = json.load(open(args.schema, "r"))
-    config = yaml.load(open(args.config, "r").read(), Loader=yaml.FullLoader)
+    schema = json.load(open(args.schema, "r", encoding="utf-8"))
+    config = yaml.load(open(args.config, "r", encoding="utf-8").read(), Loader=yaml.FullLoader)
     if True: # config validation
         jsonschema.validate(config, schema=schema) # raises exception on failure
         if len(config["source"]) != len(config["destination"]):
@@ -157,4 +157,4 @@ if __name__ == "__main__":
     except Exception as e:
         print("Exception caught: ", e)
         traceback.print_exc()
-    input("Press Enter to continue...")
+    # input("Press Enter to continue...")
