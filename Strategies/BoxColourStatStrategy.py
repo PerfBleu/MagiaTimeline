@@ -1,6 +1,7 @@
 import typing
 import enum
 import collections
+import os
 import paddleocr
 import scipy.cluster
 import scipy.spatial
@@ -30,11 +31,13 @@ class BoxColourStatStrategy(AbstractFramewiseStrategy, AbstractSpeculativeStrate
         AbstractStrategy.__init__(self, contentRect)
         AbstractSpeculativeStrategy.__init__(self)
 
+        # Use user data directory for PaddleOCR models
+        model_base_dir = getPaddleOCRModelDir()
         self.ocr = paddleocr.PaddleOCR(
             det=True, rec=False, cls=False, use_angle_cls=False, det_algorithm="DB", show_log=False,
-            det_model_dir="./PaddleOCRModels/ch_PP-OCRv4_det_infer/",
-            rec_model_dir="./PaddleOCRModels/ch_PP-OCRv4_rec_infer/",
-            cls_model_dir="./PaddleOCRModels/ch_ppocr_mobile_v2.0_cls_infer/"
+            det_model_dir=os.path.join(model_base_dir, "ch_PP-OCRv4_det_infer"),
+            rec_model_dir=os.path.join(model_base_dir, "ch_PP-OCRv4_rec_infer"),
+            cls_model_dir=os.path.join(model_base_dir, "ch_ppocr_mobile_v2.0_cls_infer")
         )
 
         self.rectangles: collections.OrderedDict[str, AbstractRectangle] = collections.OrderedDict()

@@ -4,6 +4,9 @@ import cv2 as cv
 import numpy as np
 import fractions
 import av.frame
+import os
+import sys
+import platform
 
 def formatTimestamp(timeBase: fractions.Fraction, timestamp: int) -> str:
     dTimestamp = datetime.datetime.fromtimestamp(float(timestamp * timeBase), datetime.timezone(datetime.timedelta()))
@@ -76,3 +79,31 @@ def avFrame2CvMat(frame: av.frame.Frame) -> cv.Mat:
 
 def ms2Timestamp(ms: int, timeBase: fractions.Fraction) -> int:
     return int(ms / timeBase / 1000)
+
+def getUserDataDir() -> str:
+    """
+    Get the user data directory for storing application data.
+    Returns:
+        - Windows: %APPDATA%/MagiaTimeline
+        - Linux: ~/.local/share/MagiaTimeline
+        - macOS: ~/Library/Application Support/MagiaTimeline
+    """
+    if platform.system() == "Windows":
+        base_dir = os.environ.get('APPDATA', os.path.expanduser('~'))
+    elif platform.system() == "Darwin":  # macOS
+        base_dir = os.path.expanduser('~/Library/Application Support')
+    else:  # Linux and others
+        base_dir = os.environ.get('XDG_DATA_HOME', os.path.expanduser('~/.local/share'))
+    
+    app_data_dir = os.path.join(base_dir, 'MagiaTimeline')
+    os.makedirs(app_data_dir, exist_ok=True)
+    return app_data_dir
+
+def getPaddleOCRModelDir() -> str:
+    """
+    Get the directory for PaddleOCR models.
+    Models will be stored in user data directory instead of current working directory.
+    """
+    model_dir = os.path.join(getUserDataDir(), 'PaddleOCRModels')
+    os.makedirs(model_dir, exist_ok=True)
+    return model_dir

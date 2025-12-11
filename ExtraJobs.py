@@ -1,5 +1,6 @@
 from __future__ import annotations
 import typing
+import os
 import pytesseract
 import paddleocr
 
@@ -27,6 +28,9 @@ class IIROcrPass(IIRPass):
         file = open(self.filename, "w", encoding="utf-8")
         print(f"Writing to {self.filename}")
         
+        # Use user data directory for PaddleOCR models instead of current working directory
+        model_dir = getPaddleOCRModelDir()
+        os.environ['PADDLEOCR_HOME'] = model_dir
         paddle = paddleocr.PaddleOCR(use_angle_cls=True, lang=self.paddleLang, show_log=False)
         ocrFrameFlagIndex: AbstractFlagIndex = self.strategy.getOcrFrameFlagIndex()
 
