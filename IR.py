@@ -272,6 +272,18 @@ class IIR: # Interval Intermediate Representation
             lines.append(interval.toAss(timeBase, id) + "\n")
         return "".join(lines)
     
+    def toSrt(self, timeBase: fractions.Fraction) -> str:
+        lines: typing.List[str] = []
+        mainFlagCounter: typing.Dict[int, int] = {}
+        for idx, interval in enumerate(self.intervals):
+            id = mainFlagCounter.get(interval.mainFlag, 0)
+            mainFlagCounter[interval.mainFlag] = id + 1
+            sBegin = formatTimestamp(timeBase, interval.begin)
+            sEnd = formatTimestamp(timeBase, interval.end)
+            name = interval.getName(id)
+            lines.append(f"{idx + 1}\n{sBegin} --> {sEnd}\n{name}\n\n")
+        return "".join(lines)
+    
     def getMidpoints(self) -> typing.List[typing.Tuple[str, int]]:
         midpoints: typing.List[typing.Tuple[str, int]] = []
         mainFlagCounter: typing.Dict[int, int] = {}

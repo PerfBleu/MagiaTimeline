@@ -80,6 +80,7 @@ def main():
         asstStr: str = templateAsst.read()
         templateAsst.close()
         dstAss = open(dst + ".ass", "w")
+        dstSrt = open(dst + ".srt", "w")
 
         contentRect = RatioRectangle(SrcRectangle(*size), *config["contentRect"])
 
@@ -129,6 +130,9 @@ def main():
         dstAss.write(asstStr)
         dstAss.close()
 
+        dstSrt.write(iir.toSrt(timeBase))
+        dstSrt.close()
+
         timeTimelineEnd = time.time()
         timeTimelineElapsed = timeTimelineEnd - timeStart
         
@@ -154,7 +158,9 @@ def main():
 if __name__ == "__main__":
     try:
         main()
+        exit(0)
     except Exception as e:
         print("Exception caught: ", e)
         traceback.print_exc()
+        exit(1)
     # input("Press Enter to continue...")
