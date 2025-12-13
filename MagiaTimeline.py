@@ -146,6 +146,43 @@ def main():
                 continue
             iirOcrPass = IIROcrPass(config["ocr"], dst, strategy)
             iirOcrPass.apply(iir)
+            print("merging subtitles into srt and ass (1/3)")
+            mapping = dict()
+            with open(iirOcrPass.dest + iirOcrPass.suffix, "r", encoding="utf-8") as ocr:
+                ocrText = ocr.read()
+                for line in ocrText.splitlines():
+                    parts = line.split(",", 1)
+                    if len(parts) != 2:
+                        continue
+                    mapping[parts[0]] = parts[1]
+            print("merging subtitles into srt and ass (2/3)")
+            with open(dst + "_merged.srt", "w", encoding="utf-8") as mergedSrt:
+                with open(dst + ".srt", "r", encoding="utf-8") as originalSrt:
+                        outputSrtList = []
+                        originalSrtText = originalSrt.read()
+                        for line in originalSrtText.splitlines():
+                            if line.startswith("Subtitle_Dialog"):
+                                outputSrtList.append(mapping.get(line.strip(), ""))
+                            else:
+                                outputSrtList.append(line)
+                                continue
+                        mergedSrt.write("\n".join(outputSrtList))
+            print("merging subtitles into srt and ass (3/3)")
+            with open(dst + "_merged.ass", "w", encoding="utf-8") as mergedAss:
+                with open(dst + ".ass", "r", encoding="utf-8") as originalAss:
+                    outputAssList = []
+                    originalAssText = originalAss.read()
+                    for line in originalAssText.splitlines():
+                        if line.startswith("Dialogue:"):
+                            sentence = line.split(",")[-1]
+                            line =line.replace(sentence, mapping.get(sentence.strip(), ""))
+                            outputAssList.append(line)
+                        else:
+                            outputAssList.append(line)
+                            continue
+                    mergedAss.write("\n".join(outputAssList))
+                                
+                        
 
         timeOverallEnd = time.time()
         timeOverallElapsed = timeOverallEnd - timeStart
