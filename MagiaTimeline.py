@@ -43,8 +43,8 @@ def cli():
     parser.add_argument("--version", action="version", version=VERSION)
     args = parser.parse_args()
     
-    schema = json.load(open(args.schema, "r"))
-    config = yaml.load(open(args.config, "r").read(), Loader=yaml.FullLoader)
+    schema = json.load(open(args.schema, "r", encoding="utf-8"))
+    config = yaml.load(open(args.config, "r", encoding="utf-8").read(), Loader=yaml.FullLoader)
 
     main(config, schema)
 
@@ -168,7 +168,7 @@ def main(config: dict, schema: dict, tempDirPath: typing.Optional[str] = None):
             events = iir.toAss()
         )
 
-        dstAss = open(dst + ".ass", "w")
+        dstAss = open(dst + ".ass", "w", encoding="utf-8")
         dstAss.write(asstStr)
         dstAss.close()
 
@@ -176,7 +176,7 @@ def main(config: dict, schema: dict, tempDirPath: typing.Optional[str] = None):
 
         print("==== IIR to SRT ====")
         srtStr = iir.toSrt()
-        dstSrt = open(dst + ".srt", "w")
+        dstSrt = open(dst + ".srt", "w", encoding="utf-8")
         dstSrt.write(srtStr)
         dstSrt.close()
         print("Result written to", dst + ".srt")
@@ -201,4 +201,4 @@ if __name__ == "__main__":
     except Exception as e:
         print("Exception caught: ", e)
         traceback.print_exc()
-    input("Press Enter to continue...")
+    # input("Press Enter to continue...")
