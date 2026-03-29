@@ -246,6 +246,15 @@ class Interval:
             text = self.getName(id)
         return template.format(sBegin, sEnd, self.style, text)
     
+    def toSrt(self, id: int = -1) -> str:
+        template = "{} --> {}\n{}"
+        sBegin = formatTimestamp(self.timeBase, self.begin).replace(".", ",")
+        sEnd = formatTimestamp(self.timeBase, self.end).replace(".", ",")
+        text = self.text
+        if text == "":
+            text = self.getName(id)
+        return template.format(sBegin, sEnd, text)
+    
     def timeString(self) -> str:
         return "[{}, {})".format(formatTimestamp(self.timeBase, self.begin), formatTimestamp(self.timeBase, self.end))
     
@@ -311,6 +320,15 @@ class IIR: # Interval Intermediate Representation
             mainFlagCounter[interval.mainFlag] = id + 1
             lines.append(interval.toAss(id) + "\n")
         return "".join(lines)
+    
+    def toSrt(self) -> str:
+        lines: typing.List[str] = []
+        mainFlagCounter: typing.Dict[int, int] = {}
+        for i, interval in enumerate(self.intervals):
+            id = mainFlagCounter.get(interval.mainFlag, 0)
+            mainFlagCounter[interval.mainFlag] = id + 1
+            lines.append(str(i + 1) + "\n" + interval.toSrt(id) + "\n")
+        return "\n".join(lines)
     
     def getMidpoints(self) -> typing.List[typing.Tuple[str, int]]:
         midpoints: typing.List[typing.Tuple[str, int]] = []

@@ -174,6 +174,13 @@ def main(config: dict, schema: dict, tempDirPath: typing.Optional[str] = None):
 
         print("Result written to", dst + ".ass")
 
+        print("==== IIR to SRT ====")
+        srtStr = iir.toSrt()
+        dstSrt = open(dst + ".srt", "w")
+        dstSrt.write(srtStr)
+        dstSrt.close()
+        print("Result written to", dst + ".srt")
+
         timeOverallEnd = time.time()
         timeOverallElapsed = timeOverallEnd - timeStart
             
